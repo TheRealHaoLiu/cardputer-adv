@@ -66,3 +66,13 @@ Available proposals:
 3. Run `uv sync` to create the venv
 4. Run `direnv allow` to enable the environment
 5. Implement the changes following the tasks.md checklist
+
+## OpenSpec Archive Workflow
+
+When running `/openspec:archive`:
+
+1. Run `openspec list` to check task completion status
+2. **If there are incomplete tasks**: STOP and ask the user before proceeding
+   - Show which tasks are incomplete
+   - Ask if they want to complete them first or archive anyway
+3. Only run `openspec archive <id> --yes` after user confirms
