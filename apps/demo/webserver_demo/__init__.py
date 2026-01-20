@@ -11,7 +11,7 @@ STRUCTURE:
     templates.py  - HTML template constants
 
 USAGE:
-    from apps.webserver_demo import create_app
+    from webserver_demo import create_app
     app = create_app()
     await app.start_server(port=80)
 
@@ -35,8 +35,8 @@ def create_app():
     app = Microdot()
 
     # Import sub-applications (deferred to avoid import errors at discovery)
-    from apps.webserver_demo.api import create_api
-    from apps.webserver_demo.pages import create_pages
+    from webserver_demo.api import create_api
+    from webserver_demo.pages import create_pages
 
     api = create_api()
     pages = create_pages()

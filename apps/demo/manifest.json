@@ -1,0 +1,9 @@
+{
+    "anim_demo": "Animation Demo",
+    "keyboard_demo": "Keyboard Demo",
+    "qrcode_demo": "QR Code Demo",
+    "shapes_demo": "Shapes Demo",
+    "sound_demo": "Sound Demo",
+    "storage_demo": "Storage Demo",
+    "webserver_demo_app": "Web Server Demo"
+}

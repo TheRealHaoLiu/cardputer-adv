@@ -122,14 +122,19 @@ cardputer/
 ├── boot.py           # Hardware init and WiFi connection at boot
 ├── boot.py.orig      # Original UIFlow boot.py (for device restore)
 ├── lib/              # Core framework code (MicroPython standard path)
-│   ├── framework.py  # Main event loop, app lifecycle management
+│   ├── framework.py  # Main event loop, app lifecycle, lazy loading
 │   ├── app_base.py   # Base classes (AppBase, AppSelector)
 │   └── keycode.py    # Key code constants and utilities
-├── apps/             # Runnable applications (auto-discovered)
-│   ├── launcher.py   # Home screen menu
+├── apps/             # Runnable applications (hierarchical menu)
+│   ├── manifest.json # Top-level app registry {"module": "Display Name"}
+│   ├── launcher.py   # Home screen menu (not in manifest)
 │   ├── hello_world.py# Minimal template/demo
-│   ├── anim_demo.py  # Double buffering animation demo
-│   └── keyboard_demo.py # Keyboard input handling demo
+│   ├── settings_app.py # Settings application
+│   └── demo/         # Demo apps submenu
+│       ├── manifest.json # Demo app registry
+│       ├── sound_demo.py
+│       ├── anim_demo.py
+│       └── ...
 ├── legacy/           # Pre-framework code (reference only)
 │   ├── main.py       # Original monolithic entry point
 │   └── apps/         # Original app implementations
@@ -145,7 +150,8 @@ The `legacy/` directory contains the original implementation before the app fram
 - **Non-blocking keyboard polling** - Events queued, not blocking
 - **Async/await support** for background tasks in apps
 - **ESC key** always returns to launcher (except in standalone mode)
-- **Hot-reload** via framework's `discover_apps()` in remote mount mode
+- **Lazy loading** - Apps imported only when selected, not on every ESC
+- **Hot-reload** via 'r' key in launcher (dev mode only) - rescans manifests and clears cache
 
 **Development Modes:**
 - **Remote mount:** Files served from computer, no upload needed, edit-run cycle

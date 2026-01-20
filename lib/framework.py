@@ -48,13 +48,13 @@ USAGE:
 # =============================================================================
 
 import asyncio
+import json
 import os
 import sys
 
+import app_base
 import M5
 from hardware import MatrixKeyboard
-
-import app_base
 
 # Key code constants
 from keycode import KeyCode
@@ -112,12 +112,19 @@ class Framework:
         Creates empty app list and sets up the app selector.
         Apps are added later via install().
         """
-        self._apps = []  # List of installed apps
+        self._apps = []  # List of installed apps (legacy, for compatibility)
         self._app_selector = app_base.AppSelector(self._apps)
         self._launcher = None  # Special app that ESC returns to
         self._running = False  # Controls main event loop
         self._kb = None  # Keyboard instance (created in run())
-        self._discovered_modules = set()  # Track loaded modules
+
+        # Lazy loading data structures
+        # Hierarchical registry: {"apps": [...], "submenus": {"demo": {...}, ...}}
+        # Each app entry: {"module": "hello_world", "name": "Hello World", "path": ""}
+        # Each submenu entry: {"name": "Demo", "path": "demo", "apps": [...], "submenus": {...}}
+        self._app_registry = None  # Populated by scan_apps()
+        self._app_instances = {}  # Cache: module_path -> app instance
+        self._registry_scanned = False  # True after first scan_apps() call
 
         # Detect run mode once at init (doesn't change without reset)
         try:
@@ -175,64 +182,6 @@ class Framework:
         """
         return self._apps
 
-    # =========================================================================
-    # APP DISCOVERY
-    # =========================================================================
-
-    def discover_apps(self):
-        """Scan apps directory and load/reload app modules."""
-        print(f"[discover] Scanning {self._apps_dir} (remote={self._is_remote})")
-
-        for entry in os.ilistdir(self._apps_dir):
-            filename = entry[0]
-            if (
-                not filename.endswith(".py")
-                or filename.startswith("_")
-                or filename == "launcher.py"
-            ):
-                continue
-
-            module_name = filename[:-3]
-
-            # In remote mode, force reload for hot-reloading
-            if self._is_remote and module_name in sys.modules:
-                print(f"[discover] Reloading {module_name}")
-                del sys.modules[module_name]
-
-            # Skip if already discovered (flash mode only)
-            if not self._is_remote and module_name in self._discovered_modules:
-                print(f"[discover] Skipping {module_name} (already discovered)")
-                continue
-
-            try:
-                module = __import__(module_name)
-                self._discovered_modules.add(module_name)
-
-                app_class = self._find_app_class(module)
-                if app_class:
-                    # Find existing app with same class name
-                    existing_idx = None
-                    for i, app in enumerate(self._apps):
-                        if type(app).__name__ == app_class.__name__:
-                            existing_idx = i
-                            break
-
-                    if existing_idx is not None:
-                        # In remote mode, replace with new instance for hot-reload
-                        if self._is_remote:
-                            new_app = app_class()
-                            new_app.install()
-                            self._apps[existing_idx] = new_app
-                            print(f"[discover] Replaced {app_class.__name__}")
-                    else:
-                        # New app, install it
-                        self.install(app_class())
-                        print(f"[discover] Installed {app_class.__name__}")
-                else:
-                    print(f"[discover] No AppBase subclass in {filename}")
-            except Exception as e:
-                print(f"[discover] Failed to load {filename}: {e}")
-
     def _find_app_class(self, module):
         """Find AppBase subclass in module."""
         for attr_name in dir(module):
@@ -244,6 +193,255 @@ class Framework:
                     if base.__name__ == "AppBase":
                         return attr
         return None
+
+    # =========================================================================
+    # LAZY LOADING - SCANNING
+    # =========================================================================
+
+    def scan_apps(self, force=False):
+        """
+        Scan apps directory and build registry without importing modules.
+
+        This reads manifest.json files to get app names and builds a
+        hierarchical menu structure. No app modules are imported.
+
+        Parameters:
+        -----------
+        force : bool
+            If True, rescan even if already scanned. Use for hot-reload.
+        """
+        if self._registry_scanned and not force:
+            return
+
+        print(f"[scan] Scanning {self._apps_dir} (force={force})")
+
+        # Clear caches on force reload
+        if force:
+            self._app_instances.clear()
+
+        # Build hierarchical registry
+        self._app_registry = self._scan_directory(self._apps_dir, "")
+        self._registry_scanned = True
+
+    def _scan_directory(self, dir_path, relative_path):
+        """
+        Recursively scan a directory for apps and submenus.
+
+        Returns:
+        --------
+        dict with keys:
+            - "apps": list of app entries [{module, name, path}, ...]
+            - "submenus": dict of subdir_name -> submenu registry
+        """
+        result = {"apps": [], "submenus": {}}
+
+        # Load manifest for this directory
+        manifest = self._load_manifest(dir_path)
+
+        # Scan directory entries
+        try:
+            entries = list(os.ilistdir(dir_path))
+        except OSError:
+            print(f"[scan] Cannot read directory: {dir_path}")
+            return result
+
+        for entry in entries:
+            name = entry[0]
+            entry_type = entry[1]  # 0x4000 = directory, 0x8000 = file
+
+            # Skip hidden files and special files
+            if name.startswith("_") or name.startswith("."):
+                continue
+
+            # Directory -> potential submenu
+            if entry_type == 0x4000:
+                subdir_path = f"{dir_path}/{name}"
+                sub_relative = f"{relative_path}/{name}" if relative_path else name
+
+                # Only add as submenu if it has a manifest
+                sub_manifest_path = f"{subdir_path}/manifest.json"
+                try:
+                    os.stat(sub_manifest_path)
+                    # Recursively scan subdirectory
+                    submenu = self._scan_directory(subdir_path, sub_relative)
+                    # Derive display name from directory name (capitalize each word)
+                    # MicroPython lacks .title() and .capitalize(), do it manually
+                    words = name.split("_")
+                    display_name = " ".join(w[0].upper() + w[1:] if w else w for w in words)
+                    submenu["name"] = display_name
+                    submenu["path"] = sub_relative
+                    result["submenus"][name] = submenu
+                    print(f"[scan] Found submenu: {display_name} ({sub_relative})")
+                except OSError:
+                    # No manifest, skip this directory
+                    pass
+
+            # Python file -> potential app
+            elif name.endswith(".py") and entry_type == 0x8000:
+                module_name = name[:-3]  # Remove .py
+
+                # Skip launcher (never shown in menu)
+                if module_name == "launcher":
+                    continue
+
+                # Check if module is in manifest
+                if module_name in manifest:
+                    display_name = manifest[module_name]
+                    module_path = f"{relative_path}/{module_name}" if relative_path else module_name
+                    result["apps"].append({
+                        "module": module_name,
+                        "name": display_name,
+                        "path": module_path,
+                    })
+                    print(f"[scan] Found app: {display_name} ({module_path})")
+
+        return result
+
+    def _load_manifest(self, dir_path):
+        """
+        Load manifest.json from a directory.
+
+        Returns:
+        --------
+        dict mapping module names to display names, or empty dict if not found.
+        """
+        manifest_path = f"{dir_path}/manifest.json"
+        try:
+            with open(manifest_path) as f:
+                manifest = json.load(f)
+                print(f"[scan] Loaded manifest: {manifest_path}")
+                return manifest
+        except OSError:
+            return {}
+        except ValueError as e:
+            print(f"[scan] Invalid JSON in {manifest_path}: {e}")
+            return {}
+
+    def get_app_registry(self):
+        """
+        Get the hierarchical app registry.
+
+        Call scan_apps() first to populate the registry.
+
+        Returns:
+        --------
+        dict with "apps" and "submenus" keys, or None if not scanned.
+        """
+        return self._app_registry
+
+    # =========================================================================
+    # LAZY LOADING - APP INSTANTIATION
+    # =========================================================================
+
+    def get_or_load_app(self, module_path):
+        """
+        Get an app instance, loading it if necessary.
+
+        Parameters:
+        -----------
+        module_path : str
+            The module path (e.g., "hello_world" or "demo/sound_demo")
+
+        Returns:
+        --------
+        AppBase instance, or None if loading failed.
+        """
+        # Check cache first
+        if module_path in self._app_instances:
+            print(f"[load] Using cached: {module_path}")
+            return self._app_instances[module_path]
+
+        # Load the app
+        return self._load_app(module_path)
+
+    def _load_app(self, module_path):
+        """
+        Import and instantiate an app module.
+
+        Parameters:
+        -----------
+        module_path : str
+            The module path (e.g., "hello_world" or "demo/sound_demo")
+
+        Returns:
+        --------
+        AppBase instance, or None if loading failed.
+        """
+        print(f"[load] Loading app: {module_path}")
+
+        # Convert path to module name for import
+        # "demo/sound_demo" -> need to handle subdirectory imports
+        subdir_full = None
+        if "/" in module_path:
+            # Subdirectory app - need to adjust sys.path temporarily
+            parts = module_path.rsplit("/", 1)
+            subdir = parts[0]
+            module_name = parts[1]
+            subdir_full = f"{self._apps_dir}/{subdir}"
+
+            # Add subdir to path for import
+            if subdir_full not in sys.path:
+                sys.path.insert(0, subdir_full)
+            else:
+                subdir_full = None  # Already in path, don't remove later
+        else:
+            module_name = module_path
+
+        try:
+            # Force reimport if already loaded
+            if module_name in sys.modules:
+                del sys.modules[module_name]
+
+            module = __import__(module_name)
+            app_class = self._find_app_class(module)
+
+            if app_class:
+                app = app_class()
+                app.install()
+                self._app_instances[module_path] = app
+                # Add to _apps list so AppSelector can manage it
+                if app not in self._apps:
+                    self._apps.append(app)
+                print(f"[load] Loaded: {app_class.__name__}")
+                return app
+            else:
+                print(f"[load] No AppBase subclass in {module_path}")
+                return None
+
+        except Exception as e:
+            print(f"[load] Failed to load {module_path}: {e}")
+            return None
+
+        finally:
+            # Clean up sys.path after import
+            if subdir_full and subdir_full in sys.path:
+                sys.path.remove(subdir_full)
+
+    def clear_app_cache(self):
+        """Clear all cached app instances and modules (for hot-reload)."""
+        self._app_instances.clear()
+        self._registry_scanned = False
+
+        # Clear lazily-loaded apps from _apps list (keep launcher)
+        self._apps = [app for app in self._apps if app is self._launcher]
+
+        # Clear cached Python modules so they're reimported fresh
+        # This is essential for hot-reload to pick up code changes
+        modules_to_clear = []
+        for mod_name in sys.modules:
+            mod = sys.modules[mod_name]
+            # Clear modules loaded from apps directory
+            if (
+                hasattr(mod, "__file__")
+                and mod.__file__
+                and ("/apps/" in mod.__file__ or "/remote/" in mod.__file__)
+            ):
+                modules_to_clear.append(mod_name)
+        for mod_name in modules_to_clear:
+            del sys.modules[mod_name]
+            print(f"[reload] Cleared module: {mod_name}")
+
+        print("[reload] Cleared app cache")
 
     # =========================================================================
     # FRAMEWORK CONTROL

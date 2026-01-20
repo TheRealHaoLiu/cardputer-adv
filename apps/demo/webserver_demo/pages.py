@@ -15,7 +15,7 @@ def create_pages():
     """Create and configure the pages sub-application."""
     from microdot import Microdot, redirect
 
-    from apps.webserver_demo.templates import INDEX_HTML
+    from webserver_demo.templates import INDEX_HTML
 
     pages = Microdot()
 

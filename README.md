@@ -79,7 +79,7 @@ Each app has standalone support via `if __name__ == "__main__"` block, so you ca
 - `poe run` (no args) → runs `main.py` → shows launcher menu
 - `poe run apps/foo.py` → runs that app directly with hardware init
 
-**Hot-reloading**: In remote mode, returning to the launcher (ESC) reloads app modules, so your code changes take effect without restarting.
+**Hot-reloading**: In remote mode, press 'r' in the launcher to reload all app modules. ESC now returns instantly without reloading.
 
 Press **ESC** to exit any app and return to the launcher (or REPL if running standalone).
 
@@ -138,12 +138,31 @@ Each demo teaches specific concepts. Run them with `uv run poe run apps/<name>.p
 
 ## Creating New Apps
 
-1. Copy `apps/hello_world.py` to `apps/my_app.py`
-2. Rename the class to `MyApp` (must inherit from `AppBase`)
-3. Set `self.name = "My App"` in `__init__`
-4. Update the `if __name__ == "__main__"` block to use `MyApp`
+1. Copy `apps/hello_world.py` to your new app file
+2. Rename the class (must inherit from `AppBase`)
+3. Update the `if __name__ == "__main__"` block to use your class
+4. **Register in manifest.json** - add your app to the appropriate manifest:
 
-**That's it!** Apps are auto-discovered from the `apps/` directory. No need to register them anywhere - just create the file and it appears in the launcher.
+```json
+// apps/manifest.json (top-level menu)
+{
+    "hello_world": "Hello World",
+    "my_app": "My App Name"
+}
+
+// apps/demo/manifest.json (Demo submenu)
+{
+    "sound_demo": "Sound Demo",
+    ...
+}
+```
+
+**Directory structure = menu hierarchy:**
+- `apps/*.py` + `apps/manifest.json` → top-level menu items
+- `apps/demo/*.py` + `apps/demo/manifest.json` → Demo/ submenu
+- Create new subdirectories with manifest.json for more submenus
+
+**Hot-reload in dev mode:** Press 'r' in the launcher to reload all apps.
 
 See `apps/hello_world.py` for the required structure and keyboard handling patterns.
 

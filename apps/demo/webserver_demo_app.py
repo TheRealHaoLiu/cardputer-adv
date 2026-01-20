@@ -168,7 +168,7 @@ class WebServerDemo(AppBase):
 
         # Import and create the Microdot app
         try:
-            from apps.webserver_demo import create_app
+            from webserver_demo import create_app
             self._app = create_app()
 
             # Update display

@@ -27,8 +27,18 @@ ESC key is handled by the framework - it returns to launcher automatically.
 
 RUNNING THIS APP:
 -----------------
-This app is registered in main.py. The launcher shows it in the menu.
-Select it and press Enter to launch.
+Apps appear in the launcher menu via manifest.json registration:
+
+1. Create your app file (e.g., my_app.py)
+2. Add entry to manifest.json: {"my_app": "My App Name"}
+3. The launcher scans manifests and shows your app
+
+Apps are organized hierarchically:
+- apps/manifest.json → top-level menu
+- apps/demo/manifest.json → Demo submenu
+- Create new subdirectories with manifest.json for more submenus
+
+Standalone mode: Run directly with `uv run poe run apps/hello_world.py`
 """
 
 import asyncio
@@ -47,9 +57,8 @@ for lib_path in ["/flash/lib", "/remote/lib"]:
 # =============================================================================
 # IMPORTS
 # =============================================================================
-from M5 import Lcd, Widgets
-
 from app_base import AppBase
+from M5 import Lcd, Widgets
 
 # =============================================================================
 # APP CLASS
@@ -69,7 +78,8 @@ class HelloWorld(AppBase):
         Initialize the app.
 
         Always call super().__init__() first!
-        Set self.name to what should appear in the launcher menu.
+        self.name is used internally; the launcher display name
+        comes from manifest.json.
         """
         super().__init__()
         self.name = "Hello World"

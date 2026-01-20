@@ -47,12 +47,21 @@ import sys
 try:
     os.stat("/remote/apps")
     # Dev mode: mounted at /remote
+    # Insert at position 0 so /remote is searched BEFORE /flash
     if "/remote/lib" not in sys.path:
         sys.path.insert(0, "/remote/lib")
     if "/remote/apps" not in sys.path:
         sys.path.insert(0, "/remote/apps")
+    # Clear any cached modules from /flash so we load fresh from /remote
+    for mod_name in list(sys.modules.keys()):
+        mod = sys.modules[mod_name]
+        if hasattr(mod, "__file__") and mod.__file__ and "/flash/" in mod.__file__:
+            del sys.modules[mod_name]
 except OSError:
-    # Deployed mode: /flash/lib is already in default sys.path
+    # Deployed mode: add /flash/lib and /flash/apps to path
+    # Note: default sys.path may have /flash/libs (with 's'), not /flash/lib
+    if "/flash/lib" not in sys.path:
+        sys.path.insert(0, "/flash/lib")
     if "/flash/apps" not in sys.path:
         sys.path.insert(0, "/flash/apps")
 
@@ -83,8 +92,9 @@ Lcd.fillScreen(Lcd.COLOR.BLACK)  # Clear to black
 # Import the framework components and all apps.
 # Apps must be imported AFTER path setup above.
 
-from apps.launcher import LauncherApp
 from framework import Framework
+
+from apps.launcher import LauncherApp
 
 # Apps are discovered automatically from the apps/ directory.
 # To add a new app, just create apps/my_app.py (inherit from AppBase).
@@ -121,7 +131,7 @@ def main():
     fw.install(launcher)
 
     # Apps are discovered automatically when the launcher starts.
-    # See lib/framework.py discover_apps() for the discovery logic.
+    # See lib/framework.py scan_apps() for the discovery logic.
 
     print("Framework ready. ESC returns to launcher.")
 
