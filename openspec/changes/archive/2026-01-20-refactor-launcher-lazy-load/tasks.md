@@ -83,10 +83,10 @@
 ## Phase 6: Testing
 
 ### 6.1 Functional tests (manual hardware testing required)
-- [ ] 6.1.1 Verify menu displays all apps/submenus without importing
-- [ ] 6.1.2 Verify ESC return is instant (no import delay)
-- [ ] 6.1.3 Verify submenu navigation works (Enter to descend, ESC to ascend)
-- [ ] 6.1.4 Verify first app launch imports and runs correctly
-- [ ] 6.1.5 Verify subsequent launches use cached instance
-- [ ] 6.1.6 Verify 'r' reload picks up file changes in dev mode
-- [ ] 6.1.7 Verify graceful error when app fails to load
+- [x] 6.1.1 Verify menu displays all apps/submenus without importing
+- [x] 6.1.2 Verify ESC return is instant (no import delay)
+- [x] 6.1.3 Verify submenu navigation works (Enter to descend, ESC to ascend)
+- [x] 6.1.4 Verify first app launch imports and runs correctly
+- [x] 6.1.5 Verify subsequent launches use cached instance
+- [x] 6.1.6 Verify 'r' reload picks up file changes in dev mode
+- [x] 6.1.7 Verify graceful error when app fails to load
