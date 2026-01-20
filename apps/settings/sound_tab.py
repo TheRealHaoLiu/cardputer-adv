@@ -33,6 +33,7 @@ class SoundTab(TabBase):
         if self._speaker is None:
             try:
                 from M5 import Speaker
+
                 self._speaker = Speaker
             except ImportError:
                 print("[sound] Speaker not available")
@@ -141,6 +142,7 @@ class SoundTab(TabBase):
         """Save volume to NVS."""
         try:
             import esp32
+
             nvs = esp32.NVS("settings")
             nvs.set_i32("volume", self.volume)
             nvs.commit()

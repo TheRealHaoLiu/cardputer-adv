@@ -39,9 +39,8 @@ for path in ["/flash/lib", "/remote/lib"]:
         sys.path.insert(0, path)
 
 import widgets
-from M5 import Lcd, Widgets
-
 from app_base import AppBase
+from M5 import Lcd, Widgets
 
 SCREEN_H = 135
 
@@ -132,18 +131,30 @@ class KeyboardDemo(AppBase):
 
         # Row 1: Value labels
         self._lbl_key = widgets.Label(
-            "--", 35, 45, w=35,
-            fg_color=Lcd.COLOR.YELLOW, bg_color=Lcd.COLOR.BLACK,
+            "--",
+            35,
+            45,
+            w=35,
+            fg_color=Lcd.COLOR.YELLOW,
+            bg_color=Lcd.COLOR.BLACK,
             font=Widgets.FONTS.ASCII7,
         )
         self._lbl_hex = widgets.Label(
-            "--", 100, 45, w=40,
-            fg_color=Lcd.COLOR.YELLOW, bg_color=Lcd.COLOR.BLACK,
+            "--",
+            100,
+            45,
+            w=40,
+            fg_color=Lcd.COLOR.YELLOW,
+            bg_color=Lcd.COLOR.BLACK,
             font=Widgets.FONTS.ASCII7,
         )
         self._lbl_char = widgets.Label(
-            "--", 180, 45, w=55,
-            fg_color=Lcd.COLOR.YELLOW, bg_color=Lcd.COLOR.BLACK,
+            "--",
+            180,
+            45,
+            w=55,
+            fg_color=Lcd.COLOR.YELLOW,
+            bg_color=Lcd.COLOR.BLACK,
             font=Widgets.FONTS.ASCII7,
         )
 
@@ -158,18 +169,30 @@ class KeyboardDemo(AppBase):
 
         # Row 2: Value labels
         self._lbl_shift = widgets.Label(
-            "off", 40, 60, w=30,
-            fg_color=Lcd.COLOR.YELLOW, bg_color=Lcd.COLOR.BLACK,
+            "off",
+            40,
+            60,
+            w=30,
+            fg_color=Lcd.COLOR.YELLOW,
+            bg_color=Lcd.COLOR.BLACK,
             font=Widgets.FONTS.ASCII7,
         )
         self._lbl_fn = widgets.Label(
-            "off", 93, 60, w=30,
-            fg_color=Lcd.COLOR.YELLOW, bg_color=Lcd.COLOR.BLACK,
+            "off",
+            93,
+            60,
+            w=30,
+            fg_color=Lcd.COLOR.YELLOW,
+            bg_color=Lcd.COLOR.BLACK,
             font=Widgets.FONTS.ASCII7,
         )
         self._lbl_count = widgets.Label(
-            "0", 170, 60, w=50,
-            fg_color=Lcd.COLOR.YELLOW, bg_color=Lcd.COLOR.BLACK,
+            "0",
+            170,
+            60,
+            w=50,
+            fg_color=Lcd.COLOR.YELLOW,
+            bg_color=Lcd.COLOR.BLACK,
             font=Widgets.FONTS.ASCII7,
         )
 
@@ -180,8 +203,12 @@ class KeyboardDemo(AppBase):
 
         # Row 3: Value label (full width)
         self._lbl_mod = widgets.Label(
-            "none", 35, 75, w=195,
-            fg_color=Lcd.COLOR.YELLOW, bg_color=Lcd.COLOR.BLACK,
+            "none",
+            35,
+            75,
+            w=195,
+            fg_color=Lcd.COLOR.YELLOW,
+            bg_color=Lcd.COLOR.BLACK,
             font=Widgets.FONTS.ASCII7,
         )
 

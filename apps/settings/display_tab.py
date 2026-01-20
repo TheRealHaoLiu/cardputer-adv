@@ -31,7 +31,7 @@ class DisplayTab(TabBase):
         try:
             self.brightness = Lcd.getBrightness()
             self.brightness_saved = self.brightness
-        except:
+        except Exception:
             pass
 
     def draw(self, app):
@@ -106,6 +106,7 @@ class DisplayTab(TabBase):
         """Save brightness to NVS."""
         try:
             import esp32
+
             nvs = esp32.NVS("settings")
             nvs.set_i32("brightness", self.brightness)
             nvs.commit()

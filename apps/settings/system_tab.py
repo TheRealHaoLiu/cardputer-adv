@@ -43,6 +43,7 @@ class SystemTab(TabBase):
         # Memory info
         try:
             import gc
+
             gc.collect()
             free_mem = gc.mem_free()
             alloc_mem = gc.mem_alloc()
@@ -53,7 +54,7 @@ class SystemTab(TabBase):
             Lcd.setTextColor(WHITE, BLACK)
             Lcd.setCursor(70, CONTENT_Y + 25)
             Lcd.print(f"{free_mem:,} / {total_mem:,} free")
-        except:
+        except Exception:
             Lcd.setTextColor(GRAY, BLACK)
             Lcd.setCursor(10, CONTENT_Y + 25)
             Lcd.print("Memory: (unavailable)")
@@ -61,6 +62,7 @@ class SystemTab(TabBase):
         # Storage info
         try:
             import os
+
             stat = os.statvfs("/flash")
             block_size = stat[0]
             total_blocks = stat[2]
@@ -73,7 +75,7 @@ class SystemTab(TabBase):
             Lcd.setTextColor(WHITE, BLACK)
             Lcd.setCursor(70, CONTENT_Y + 40)
             Lcd.print(f"{used_kb} KB / {total_kb} KB used")
-        except:
+        except Exception:
             Lcd.setTextColor(GRAY, BLACK)
             Lcd.setCursor(10, CONTENT_Y + 40)
             Lcd.print("Storage: (unavailable)")
@@ -108,6 +110,7 @@ class SystemTab(TabBase):
         """Save boot option to NVS."""
         try:
             import esp32
+
             nvs = esp32.NVS("settings")
             nvs.set_i32("boot_option", self.boot_option)
             nvs.commit()
@@ -126,6 +129,7 @@ class SystemTab(TabBase):
         Lcd.print("Rebooting...")
         try:
             import machine
+
             machine.reset()
         except Exception as e:
             print(f"[system] Reboot failed: {e}")

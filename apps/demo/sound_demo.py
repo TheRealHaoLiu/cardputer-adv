@@ -37,10 +37,9 @@ for path in ["/flash/lib", "/remote/lib"]:
     if path not in sys.path:
         sys.path.insert(0, path)
 
-from M5 import Lcd, Speaker, Widgets
-
 from app_base import AppBase
 from keycode import KeyCode
+from M5 import Lcd, Speaker, Widgets
 
 # Screen dimensions
 SCREEN_W = 240
@@ -144,14 +143,14 @@ class SoundDemo(AppBase):
         char_width = 6
         base_x = 10
         note_positions = {
-            "C4": base_x + 0 * 3 * char_width,   # 10
-            "D4": base_x + 1 * 3 * char_width,   # 28
-            "E4": base_x + 2 * 3 * char_width,   # 46
-            "F4": base_x + 3 * 3 * char_width,   # 64
-            "G4": base_x + 4 * 3 * char_width,   # 82
-            "A4": base_x + 5 * 3 * char_width,   # 100
-            "B4": base_x + 6 * 3 * char_width,   # 118
-            "C5": base_x + 7 * 3 * char_width,   # 136
+            "C4": base_x + 0 * 3 * char_width,  # 10
+            "D4": base_x + 1 * 3 * char_width,  # 28
+            "E4": base_x + 2 * 3 * char_width,  # 46
+            "F4": base_x + 3 * 3 * char_width,  # 64
+            "G4": base_x + 4 * 3 * char_width,  # 82
+            "A4": base_x + 5 * 3 * char_width,  # 100
+            "B4": base_x + 6 * 3 * char_width,  # 118
+            "C5": base_x + 7 * 3 * char_width,  # 136
         }
 
         # Clear previous highlight

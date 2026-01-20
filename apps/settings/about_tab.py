@@ -52,9 +52,10 @@ class AboutTab(TabBase):
         Lcd.setCursor(80, y)
         try:
             import sys
+
             ver = sys.version.split()[0] if hasattr(sys, "version") else "unknown"
             Lcd.print(ver[:20])
-        except:
+        except Exception:
             Lcd.print("unknown")
 
         # MAC address
@@ -66,11 +67,12 @@ class AboutTab(TabBase):
         Lcd.setCursor(80, y)
         try:
             import network
+
             wlan = network.WLAN(network.STA_IF)
             mac = wlan.config("mac")
             mac_str = ":".join(f"{b:02X}" for b in mac)
             Lcd.print(mac_str)
-        except:
+        except Exception:
             Lcd.print("(unavailable)")
 
         # Uptime
@@ -82,6 +84,7 @@ class AboutTab(TabBase):
         Lcd.setCursor(80, y)
         try:
             import time
+
             ticks = time.ticks_ms()
             secs = ticks // 1000
             mins = secs // 60
@@ -89,7 +92,7 @@ class AboutTab(TabBase):
             secs = secs % 60
             mins = mins % 60
             Lcd.print(f"{hours}h {mins}m {secs}s")
-        except:
+        except Exception:
             Lcd.print("(unavailable)")
 
         # Battery level
@@ -100,6 +103,7 @@ class AboutTab(TabBase):
         Lcd.setCursor(80, y)
         try:
             from M5 import Power
+
             level = Power.getBatteryLevel()
             charging = Power.isCharging()
             if level > 50:
@@ -110,7 +114,7 @@ class AboutTab(TabBase):
                 Lcd.setTextColor(0xFF0000, BLACK)
             status = " (charging)" if charging else ""
             Lcd.print(f"{level}%{status}")
-        except:
+        except Exception:
             Lcd.setTextColor(WHITE, BLACK)
             Lcd.print("(unavailable)")
 

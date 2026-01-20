@@ -46,10 +46,9 @@ for path in ["/flash/lib", "/remote/lib"]:
         sys.path.insert(0, path)
 
 import esp32
-from M5 import Lcd, Widgets
-
 from app_base import AppBase
 from keycode import KeyCode
+from M5 import Lcd, Widgets
 
 SCREEN_W = 240
 SCREEN_H = 135

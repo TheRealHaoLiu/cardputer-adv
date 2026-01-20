@@ -417,9 +417,9 @@ class WidgetsDemo:
             return val
 
         # Draw cards
-        card1 = draw_card(5, 24, 72, 45, "Battery", "85%", Lcd.COLOR.GREEN)
-        card2 = draw_card(84, 24, 72, 45, "Signal", "4/5", Lcd.COLOR.YELLOW)
-        card3 = draw_card(163, 24, 72, 45, "Temp", "32C", Lcd.COLOR.CYAN)
+        draw_card(5, 24, 72, 45, "Battery", "85%", Lcd.COLOR.GREEN)
+        draw_card(84, 24, 72, 45, "Signal", "4/5", Lcd.COLOR.YELLOW)
+        draw_card(163, 24, 72, 45, "Temp", "32C", Lcd.COLOR.CYAN)
 
         # Code explanation
         Lcd.setFont(Widgets.FONTS.ASCII7)

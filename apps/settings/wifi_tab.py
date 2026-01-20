@@ -37,6 +37,7 @@ class WiFiTab(TabBase):
         if self._wlan is None:
             try:
                 import network
+
                 self._wlan = network.WLAN(network.STA_IF)
             except Exception as e:
                 print(f"[wifi] WLAN init failed: {e}")
@@ -197,6 +198,7 @@ class WiFiTab(TabBase):
         """Save WiFi enabled state to NVS."""
         try:
             import esp32
+
             nvs = esp32.NVS("settings")
             nvs.set_i32("wifi_on", 1 if enabled else 0)
             nvs.commit()
@@ -228,6 +230,7 @@ class WiFiTab(TabBase):
             wlan.active(True)
             self.enabled = True
             import time
+
             time.sleep_ms(500)
 
         self.scanning = True
@@ -277,6 +280,7 @@ class WiFiTab(TabBase):
         Lcd.print("Connecting...")
 
         import time
+
         connected = False
 
         try:
@@ -286,7 +290,7 @@ class WiFiTab(TabBase):
 
             wlan.connect(ssid, password)
 
-            for i in range(100):
+            for _i in range(100):
                 if wlan.isconnected():
                     time.sleep_ms(1000)
                     if wlan.isconnected():
@@ -300,9 +304,9 @@ class WiFiTab(TabBase):
                 self._save_credentials(ssid, password)
             else:
                 self.connected_ssid = None
-                try:
+                try:  # noqa: SIM105 - contextlib not available in MicroPython
                     wlan.disconnect()
-                except:
+                except Exception:
                     pass
                 print("[wifi] Connection failed")
                 Lcd.fillRect(0, CONTENT_Y, SCREEN_W, CONTENT_H, BLACK)
@@ -331,6 +335,7 @@ class WiFiTab(TabBase):
         """Save credentials to NVS."""
         try:
             import esp32
+
             nvs = esp32.NVS("wifi")
             nvs.set_blob("ssid", ssid.encode("utf-8"))
             nvs.set_blob("password", password.encode("utf-8"))
@@ -343,6 +348,7 @@ class WiFiTab(TabBase):
         """Load credentials from NVS."""
         try:
             import esp32
+
             nvs = esp32.NVS("wifi")
             ssid_buf = bytearray(64)
             ssid_len = nvs.get_blob("ssid", ssid_buf)
@@ -360,6 +366,7 @@ class WiFiTab(TabBase):
         """Forget saved credentials."""
         try:
             import esp32
+
             nvs = esp32.NVS("wifi")
             nvs.erase_key("ssid")
             nvs.erase_key("password")
@@ -441,6 +448,7 @@ class WiFiTab(TabBase):
                     wlan.active(True)
                     self.enabled = True
                     import time
+
                     time.sleep_ms(500)
                 self._do_connect(app, saved_ssid, saved_pwd)
             return True

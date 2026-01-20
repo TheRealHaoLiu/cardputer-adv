@@ -40,10 +40,9 @@ for path in ["/flash/lib", "/remote/lib"]:
     if path not in sys.path:
         sys.path.insert(0, path)
 
-from M5 import Lcd, Widgets
-
 from app_base import AppBase
 from keycode import KeyCode
+from M5 import Lcd, Widgets
 
 SCREEN_W = 240
 SCREEN_H = 135

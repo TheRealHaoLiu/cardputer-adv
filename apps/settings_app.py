@@ -26,10 +26,9 @@ for path in ["/flash/lib", "/remote/lib"]:
     if path not in sys.path:
         sys.path.insert(0, path)
 
-from M5 import Lcd, Widgets
-
 from app_base import AppBase
 from keycode import HID_TAB, KEY_NAV_DOWN, KEY_NAV_UP, KeyCode
+from M5 import Lcd, Widgets
 
 # Import shared constants from settings package
 from apps.settings import (
@@ -83,18 +82,23 @@ class SettingsApp(AppBase):
             print(f"[settings] Loading tab: {TAB_NAMES[index]}")
             if index == TAB_WIFI:
                 from apps.settings.wifi_tab import WiFiTab
+
                 self._tabs[index] = WiFiTab()
             elif index == TAB_DISPLAY:
                 from apps.settings.display_tab import DisplayTab
+
                 self._tabs[index] = DisplayTab()
             elif index == TAB_SOUND:
                 from apps.settings.sound_tab import SoundTab
+
                 self._tabs[index] = SoundTab()
             elif index == TAB_SYSTEM:
                 from apps.settings.system_tab import SystemTab
+
                 self._tabs[index] = SystemTab()
             elif index == TAB_ABOUT:
                 from apps.settings.about_tab import AboutTab
+
                 self._tabs[index] = AboutTab()
         return self._tabs.get(index)
 
@@ -103,7 +107,7 @@ class SettingsApp(AppBase):
         print("[settings] Launched")
         # Pre-load Display tab and init brightness
         tab = self._get_tab(TAB_DISPLAY)
-        if hasattr(tab, 'on_enter'):
+        if hasattr(tab, "on_enter"):
             tab.on_enter()
 
     def on_view(self):
@@ -176,7 +180,7 @@ class SettingsApp(AppBase):
 
         # Call on_enter if tab has it
         tab = self._get_tab(self._current_tab)
-        if tab and hasattr(tab, 'on_enter'):
+        if tab and hasattr(tab, "on_enter"):
             tab.on_enter()
 
         self.on_view()

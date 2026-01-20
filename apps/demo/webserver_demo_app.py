@@ -67,6 +67,7 @@ class WebServerDemo(AppBase):
         """Load saved WiFi credentials from NVS."""
         try:
             import esp32
+
             nvs = esp32.NVS("wifi")
             ssid_buf = bytearray(64)
             ssid_len = nvs.get_blob("ssid", ssid_buf)
@@ -81,8 +82,9 @@ class WebServerDemo(AppBase):
 
     def _connect_wifi(self):
         """Connect to WiFi using saved credentials."""
-        import network
         import time
+
+        import network
 
         ssid, password = self._load_wifi_credentials()
         if not ssid:
@@ -169,6 +171,7 @@ class WebServerDemo(AppBase):
         # Import and create the Microdot app
         try:
             from webserver_demo import create_app
+
             self._app = create_app()
 
             # Update display

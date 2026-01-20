@@ -288,11 +288,13 @@ class Framework:
                 if module_name in manifest:
                     display_name = manifest[module_name]
                     module_path = f"{relative_path}/{module_name}" if relative_path else module_name
-                    result["apps"].append({
-                        "module": module_name,
-                        "name": display_name,
-                        "path": module_path,
-                    })
+                    result["apps"].append(
+                        {
+                            "module": module_name,
+                            "name": display_name,
+                            "path": module_path,
+                        }
+                    )
                     print(f"[scan] Found app: {display_name} ({module_path})")
 
         return result

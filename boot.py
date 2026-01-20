@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 # boot.py - Simple boot that runs main.py
 import M5
 
@@ -36,8 +35,9 @@ def _wifi_boot_connect():
             return
 
         # Connect to WiFi
-        import network
         import time
+
+        import network
 
         wlan = network.WLAN(network.STA_IF)
         wlan.active(True)
