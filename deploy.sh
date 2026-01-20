@@ -22,53 +22,28 @@ echo ""
 echo "WARNING: This will replace /flash/main.py, /flash/lib/*, and /flash/apps/*"
 echo ""
 
-# Build the list of lib files dynamically
-LIB_FILES=$(ls lib/*.py 2>/dev/null | while read f; do
-    filename=$(basename "$f")
-    echo "+ cp $f :/flash/lib/$filename"
-done | tr '\n' ' ')
+# Python code for cleanup (single line to avoid quoting issues)
+CLEANUP_CODE='import os
+def rmtree(p):
+ try:
+  for f in os.listdir(p):
+   fp=p+"/"+f
+   try:os.remove(fp)
+   except:rmtree(fp)
+  os.rmdir(p)
+ except:pass
+rmtree("/flash/lib");os.mkdir("/flash/lib");print("Cleared /flash/lib")
+rmtree("/flash/apps");os.mkdir("/flash/apps");print("Cleared /flash/apps")'
 
-# Build the list of app files dynamically
-APP_FILES=$(ls apps/*.py 2>/dev/null | while read f; do
-    filename=$(basename "$f")
-    echo "+ cp $f :/flash/apps/$filename"
-done | tr '\n' ' ')
+DONE_CODE='import os;print("Done!");print("Lib:",os.listdir("/flash/lib"));print("Apps:",os.listdir("/flash/apps"))'
 
 # Use a single mpremote session with chained commands
-eval uv run mpremote connect "$DEVICE" \
-    exec \"'
-import os
-def rmtree(path):
-    try:
-        for f in os.listdir(path):
-            fp = path + \"/\" + f
-            try:
-                os.remove(fp)
-            except:
-                rmtree(fp)
-        os.rmdir(path)
-    except:
-        pass
-
-# Clear and recreate lib directory
-rmtree(\"/flash/lib\")
-os.mkdir(\"/flash/lib\")
-print(\"Cleared /flash/lib\")
-
-# Clear and recreate apps directory
-rmtree(\"/flash/apps\")
-os.mkdir(\"/flash/apps\")
-print(\"Cleared /flash/apps\")
-'\" \
-    $LIB_FILES \
-    $APP_FILES \
-    + cp main.py :/flash/main.py \
-    + exec \"'
-import os
-print(\"Done!\")
-print(\"Lib:\", os.listdir(\"/flash/lib\"))
-print(\"Apps:\", os.listdir(\"/flash/apps\"))
-'\"
+uv run mpremote connect "$DEVICE" \
+    exec "$CLEANUP_CODE" \
+    + fs cp -r lib/ :/flash/lib/ \
+    + fs cp -r apps/ :/flash/apps/ \
+    + fs cp main.py :/flash/main.py \
+    + exec "$DONE_CODE"
 
 echo ""
 echo "Reset device to run standalone, or use 'uv run poe run' for development."
