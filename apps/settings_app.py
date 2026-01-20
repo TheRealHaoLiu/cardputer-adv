@@ -22,14 +22,14 @@ import asyncio
 import sys
 
 # Add lib paths for imports (needed on device)
-for path in ["/flash", "/remote"]:
+for path in ["/flash/lib", "/remote/lib"]:
     if path not in sys.path:
         sys.path.insert(0, path)
 
 from M5 import Lcd, Widgets
 
-from libs.app_base import AppBase
-from libs.keycode import HID_TAB, KEY_NAV_DOWN, KEY_NAV_UP, KeyCode
+from app_base import AppBase
+from keycode import HID_TAB, KEY_NAV_DOWN, KEY_NAV_UP, KeyCode
 
 # Import shared constants from settings package
 from apps.settings import (
@@ -235,7 +235,7 @@ if __name__ == "__main__":
     Lcd.setRotation(1)
     Lcd.setBrightness(80)
 
-    from libs.framework import Framework
+    from framework import Framework
 
     fw = Framework()
     fw.install(SettingsApp())

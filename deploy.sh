@@ -4,7 +4,7 @@
 # WARNING: This replaces ALL of the following on the device:
 #   - /flash/boot.py
 #   - /flash/main.py
-#   - /flash/libs/* (framework, app_base, etc.)
+#   - /flash/lib/* (framework, app_base, etc.)
 #   - /flash/apps/* (all app files)
 #
 # Any changes made directly on the device will be lost!
@@ -20,11 +20,11 @@ fi
 
 echo "Deploying to $DEVICE"
 echo ""
-echo "WARNING: This will replace /flash/boot.py, /flash/main.py, /flash/libs/*, and /flash/apps/*"
+echo "WARNING: This will replace /flash/boot.py, /flash/main.py, /flash/lib/*, and /flash/apps/*"
 echo ""
 
 # Remove local __pycache__ directories before copying
-find libs apps -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+find lib apps -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
 
 # Python code for cleanup (remove old directories, cp -r will recreate them)
 CLEANUP_CODE='import os
@@ -36,14 +36,14 @@ def rmtree(p):
    except:rmtree(fp)
   os.rmdir(p)
  except:pass
-rmtree("/flash/lib");rmtree("/flash/libs");print("Cleared /flash/libs")
+rmtree("/flash/lib");print("Cleared /flash/lib")
 rmtree("/flash/apps");print("Cleared /flash/apps")'
 
 # Use a single mpremote session with chained commands
-# Note: cp -r libs/ :/flash/ copies libs directory to /flash/libs/
+# Note: cp -r lib/ :/flash/ copies lib directory to /flash/lib/
 uv run mpremote connect "$DEVICE" \
     exec "$CLEANUP_CODE" \
-    + fs cp -r libs/ :/flash/ \
+    + fs cp -r lib/ :/flash/ \
     + fs cp -r apps/ :/flash/ \
     + fs cp main.py :/flash/main.py \
     + fs cp boot.py :/flash/boot.py \

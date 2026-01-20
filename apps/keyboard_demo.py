@@ -34,19 +34,19 @@ CONTROLS:
 import asyncio
 import sys
 
-for path in ["/flash", "/remote"]:
+for path in ["/flash/lib", "/remote/lib"]:
     if path not in sys.path:
         sys.path.insert(0, path)
 
 import widgets
 from M5 import Lcd, Widgets
 
-from libs.app_base import AppBase
+from app_base import AppBase
 
 SCREEN_H = 135
 
 # Key constants and modifiers
-from libs.keycode import (
+from keycode import (
     KEY_MOD_LSHIFT,
     KeyCode,
     decode_modifiers,
@@ -331,7 +331,7 @@ if __name__ == "__main__":
     Lcd.setRotation(1)
     Lcd.setBrightness(40)
 
-    from libs.framework import Framework
+    from framework import Framework
 
     fw = Framework()
     fw.install(KeyboardDemo())

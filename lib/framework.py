@@ -31,7 +31,7 @@ Each tick of the event loop:
 
 USAGE:
 ------
-    from libs.framework import Framework
+    from framework import Framework
     from apps.launcher import LauncherApp
     from apps.my_app import MyApp
 
@@ -54,10 +54,10 @@ import sys
 import M5
 from hardware import MatrixKeyboard
 
-from libs import app_base
+import app_base
 
 # Key code constants
-from libs.keycode import KeyCode
+from keycode import KeyCode
 
 # =============================================================================
 # KEY EVENT CLASS

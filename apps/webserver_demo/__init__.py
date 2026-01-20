@@ -30,7 +30,7 @@ def create_app():
 
     Raises ImportError if microdot is not installed.
     """
-    from libs.microdot import Microdot
+    from microdot import Microdot
 
     app = Microdot()
 

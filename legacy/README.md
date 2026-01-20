@@ -20,7 +20,7 @@ This directory contains the original implementation before the app framework ref
 
 1. **Separation of Concerns**
    - `boot.py` - Hardware init and WiFi
-   - `libs/framework.py` - Event loop, keyboard routing, app management
+   - `lib/framework.py` - Event loop, keyboard routing, app management
    - `apps/` - Each app in its own file, inheriting from `AppBase`
 
 2. **Auto-Discovery** - Drop a new `.py` file in `apps/` and it appears in the launcher. No registry to maintain.

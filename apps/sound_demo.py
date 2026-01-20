@@ -33,14 +33,14 @@ import asyncio
 import sys
 
 # Ensure lib is in path for imports
-for path in ["/flash", "/remote"]:
+for path in ["/flash/lib", "/remote/lib"]:
     if path not in sys.path:
         sys.path.insert(0, path)
 
 from M5 import Lcd, Speaker, Widgets
 
-from libs.app_base import AppBase
-from libs.keycode import KeyCode
+from app_base import AppBase
+from keycode import KeyCode
 
 # Screen dimensions
 SCREEN_W = 240
@@ -313,7 +313,7 @@ if __name__ == "__main__":
     Lcd.setRotation(1)
     Lcd.setBrightness(40)
 
-    from libs.framework import Framework
+    from framework import Framework
 
     fw = Framework()
     fw.install(SoundDemo())

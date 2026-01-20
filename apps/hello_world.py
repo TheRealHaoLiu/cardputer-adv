@@ -34,26 +34,22 @@ Select it and press Enter to launch.
 import asyncio
 
 # =============================================================================
-# PATH SETUP FOR IMPORTS
+# PATH SETUP FOR STANDALONE MODE
 # =============================================================================
-# When running as an app, we need to ensure lib/ is in the import path.
-# This allows us to import from libs.app_base even when the app is
-# loaded dynamically by the framework.
+# When running standalone (not via launcher), ensure lib/ is in sys.path.
+# MicroPython's default includes /flash/lib; we add /remote/lib for dev mode.
 import sys
+
+for lib_path in ["/flash/lib", "/remote/lib"]:
+    if lib_path not in sys.path:
+        sys.path.insert(0, lib_path)
 
 # =============================================================================
 # IMPORTS
 # =============================================================================
-# M5 module provides access to LCD display and hardware
-# Widgets provides fonts for text rendering
 from M5 import Lcd, Widgets
 
-# Path setup for imports (need parent of libs/ for "from libs.x" imports)
-for lib_path in ["/flash", "/remote"]:
-    if lib_path not in sys.path:
-        sys.path.insert(0, lib_path)
-
-from libs.app_base import AppBase
+from app_base import AppBase
 
 # =============================================================================
 # APP CLASS
@@ -158,7 +154,7 @@ if __name__ == "__main__":
     Lcd.setRotation(1)
     Lcd.setBrightness(40)
 
-    from libs.framework import Framework
+    from framework import Framework
 
     fw = Framework()
     fw.install(HelloWorld())

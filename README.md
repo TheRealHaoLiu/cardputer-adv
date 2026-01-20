@@ -74,7 +74,7 @@ Each app has standalone support via `if __name__ == "__main__"` block, so you ca
 
 ### How It Works
 
-`poe run` mounts your local directory to `/remote/` on the device and executes the file. **All files are loaded from your local machine** - including `lib/` (framework, app_base) and `apps/`. Your local edits are immediately available - no copying needed!
+`poe run` mounts your local directory to `/remote/` on the device and executes the file. **All files are loaded from your local machine** - including `lib/` (framework.py, app_base.py) and `apps/`. Your local edits are immediately available - no copying needed!
 
 - `poe run` (no args) → runs `main.py` → shows launcher menu
 - `poe run apps/foo.py` → runs that app directly with hardware init
@@ -93,7 +93,7 @@ Copies all files to device flash. The device runs independently after this - no 
 
 **WARNING**: Deploy replaces **all** of the following on the device:
 - `/flash/main.py`
-- `/flash/libs/*` (framework.py, app_base.py, etc.)
+- `/flash/lib/*` (framework.py, app_base.py, etc.)
 - `/flash/apps/*` (all app files)
 
 Any changes made directly on the device will be lost!

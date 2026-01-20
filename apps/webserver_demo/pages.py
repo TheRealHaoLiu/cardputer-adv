@@ -13,7 +13,7 @@ ROUTES:
 
 def create_pages():
     """Create and configure the pages sub-application."""
-    from libs.microdot import Microdot, redirect
+    from microdot import Microdot, redirect
 
     from apps.webserver_demo.templates import INDEX_HTML
 

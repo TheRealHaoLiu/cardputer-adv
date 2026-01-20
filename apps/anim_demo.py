@@ -32,12 +32,12 @@ import sys
 
 from M5 import Lcd, Widgets
 
-# Path setup for imports (need parent of libs/ for "from libs.x" imports)
-for lib_path in ["/flash", "/remote"]:
+# Path setup for standalone mode
+for lib_path in ["/flash/lib", "/remote/lib"]:
     if lib_path not in sys.path:
         sys.path.insert(0, lib_path)
 
-from libs.app_base import AppBase
+from app_base import AppBase
 
 # =============================================================================
 # SCREEN CONSTANTS
@@ -216,7 +216,7 @@ if __name__ == "__main__":
     Lcd.setRotation(1)
     Lcd.setBrightness(40)
 
-    from libs.framework import Framework
+    from framework import Framework
 
     fw = Framework()
     fw.install(AnimDemo())

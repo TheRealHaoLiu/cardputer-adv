@@ -22,7 +22,7 @@ def create_api():
     import gc
     import time
 
-    from libs.microdot import Microdot
+    from microdot import Microdot
 
     api = Microdot()
 

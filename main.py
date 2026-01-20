@@ -36,21 +36,23 @@ CONTROLS:
 # =============================================================================
 # PATH SETUP
 # =============================================================================
-# MicroPython adds the script's directory to sys.path automatically.
-# So when running /remote/main.py, /remote is already in path and
-# "from libs.framework" finds /remote/libs/framework.py.
-#
-# We only need to add the apps directory for dynamic app discovery.
+# MicroPython's default sys.path includes /flash/lib for deployed mode.
+# For dev mode (mpremote mount), we need to add the lib path explicitly.
+# We also add the apps directory for dynamic app discovery.
 
 import os
 import sys
 
-# Detect run mode and add apps path for dynamic discovery
+# Detect run mode and configure paths
 try:
     os.stat("/remote/apps")
+    # Dev mode: mounted at /remote
+    if "/remote/lib" not in sys.path:
+        sys.path.insert(0, "/remote/lib")
     if "/remote/apps" not in sys.path:
         sys.path.insert(0, "/remote/apps")
 except OSError:
+    # Deployed mode: /flash/lib is already in default sys.path
     if "/flash/apps" not in sys.path:
         sys.path.insert(0, "/flash/apps")
 
@@ -82,7 +84,7 @@ Lcd.fillScreen(Lcd.COLOR.BLACK)  # Clear to black
 # Apps must be imported AFTER path setup above.
 
 from apps.launcher import LauncherApp
-from libs.framework import Framework
+from framework import Framework
 
 # Apps are discovered automatically from the apps/ directory.
 # To add a new app, just create apps/my_app.py (inherit from AppBase).
