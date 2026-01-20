@@ -119,7 +119,9 @@ Manual testing on hardware device. Use development workflow with mounted files f
 ```
 cardputer/
 ├── main.py           # Entry point - initializes hardware, creates framework
-├── lib/              # Core framework code (reusable)
+├── boot.py           # Hardware init and WiFi connection at boot
+├── boot.py.orig      # Original UIFlow boot.py (for device restore)
+├── libs/             # Core framework code (reusable)
 │   ├── framework.py  # Main event loop, app lifecycle management
 │   ├── app_base.py   # Base classes (AppBase, AppSelector)
 │   └── keycode.py    # Key code constants and utilities
@@ -128,10 +130,15 @@ cardputer/
 │   ├── hello_world.py# Minimal template/demo
 │   ├── anim_demo.py  # Double buffering animation demo
 │   └── keyboard_demo.py # Keyboard input handling demo
-├── legacy_apps/      # Old app versions (pre-framework, reference only)
+├── legacy/           # Pre-framework code (reference only)
+│   ├── main.py       # Original monolithic entry point
+│   └── apps/         # Original app implementations
 ├── deploy.sh         # Flash deployment script
 └── pyproject.toml    # Project config and dev dependencies
 ```
+
+**Legacy Code:**
+The `legacy/` directory contains the original implementation before the app framework refactor. It's preserved for reference but not actively maintained. The legacy approach had a monolithic main.py with manual app registry, no lifecycle management, and tight coupling. Run with `poe run legacy/main.py` if needed.
 
 **Key Framework Concepts:**
 - **10ms tick rate** = 100 updates/second for responsive input

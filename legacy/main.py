@@ -81,7 +81,7 @@ from M5 import Lcd, Widgets  # LCD drawing and widget fonts
 # We add BOTH paths. Python will find modules from whichever exists.
 # /remote/apps is added LAST so it takes priority (first match wins in Python).
 
-for apps_path in ["/flash/apps", "/remote/apps"]:
+for apps_path in ["/flash/legacy/apps", "/remote/legacy/apps"]:
     if apps_path not in sys.path:
         sys.path.insert(0, apps_path)  # insert(0, ...) = add to front of list
 
@@ -90,7 +90,7 @@ import os  # File system operations
 
 try:
     # os.stat() gets file info. If file doesn't exist, raises OSError.
-    os.stat("/remote/main.py")
+    os.stat("/remote/legacy/main.py")
     RUN_MODE = "remote"  # Running from mounted directory
 except OSError:
     RUN_MODE = "flash"  # Running from device flash
