@@ -7,6 +7,6 @@
 - [x] 1.4 Update wifi_tab.py toggle() to save wifi_on state to NVS
 
 ## 2. Testing
-- [ ] 2.1 Test WiFi auto-connect on boot with saved credentials
-- [ ] 2.2 Test WiFi does not connect when disabled
-- [ ] 2.3 Test toggle saves state and persists across reboots
+- [x] 2.1 Test WiFi auto-connect on boot with saved credentials
+- [x] 2.2 Test WiFi does not connect when disabled
+- [x] 2.3 Test toggle saves state and persists across reboots
