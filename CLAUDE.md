@@ -19,11 +19,50 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 
 ## OpenSpec Apply Workflow
 
-When running `openspec apply`:
-1. **Check for uncommitted changes** - Refuse to apply if the plan has uncommitted changes.
-2. **Assess context needs** - Check remaining context window and read the plan complexity (tasks.md). If context is low (<50% remaining) or the plan is complex, recommend the user run `/clear` first and re-run the command.
-3. Create a new git worktree with a branch named after the change-id (e.g., `git worktree add ../cardputer-<change-id> -b <change-id>`)
-4. Change to the new worktree directory
-5. Run `uv sync` to create the venv
-6. Run `direnv allow` to enable the environment
-7. Implement the changes there
+When running `/openspec:apply`:
+
+### Step 1: Discover and Display Proposals
+
+1. Find all proposals in `openspec/changes/` (exclude `archive/`)
+2. For each proposal, check git status to determine if it has uncommitted changes:
+   - `??` (untracked), `M` (modified), `A` (staged), `AM` (added+modified) = uncommitted
+3. Read each `proposal.md` to get a brief description
+4. Display all proposals with their status:
+
+```
+Available proposals:
+
+1. add-demo-apps ✓ (committed)
+   Brief description from proposal.md
+
+2. refactor-launcher-lazy-load ✗ (uncommitted)
+   Brief description from proposal.md
+```
+
+### Step 2: Handle Based on What's Available
+
+**If all proposals have uncommitted changes:**
+- STOP and tell the user which proposals need to be committed
+- Provide the git commands to commit them:
+  ```
+  git add openspec/changes/<id>/
+  git commit -m "Add <id> proposal"
+  ```
+
+**If one or more proposals are fully committed:**
+- Ask the user which one to apply (always confirm, even if there's only one)
+
+### Step 3: Pre-Implementation Checks
+
+1. **Assess context needs** - Check remaining context window and read the plan complexity (tasks.md). If context is low (<50% remaining) or the plan is complex, recommend the user run `/clear` first and re-run the command.
+
+### Step 4: Set Up Worktree and Implement
+
+1. Create a new git worktree with a branch named after the change-id:
+   ```
+   git worktree add ../cardputer-<change-id> -b <change-id>
+   ```
+2. Change to the new worktree directory
+3. Run `uv sync` to create the venv
+4. Run `direnv allow` to enable the environment
+5. Implement the changes following the tasks.md checklist
