@@ -65,7 +65,8 @@ Available proposals:
 2. Change to the new worktree directory
 3. Run `uv sync` to create the venv
 4. Run `direnv allow` to enable the environment
-5. Implement the changes following the tasks.md checklist
+5. Run `uv run pre-commit install` to set up git hooks
+6. Implement the changes following the tasks.md checklist
 
 ## OpenSpec Archive Workflow
 

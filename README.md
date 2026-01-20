@@ -53,6 +53,18 @@ For development with mpremote, use mode 0.
 
 If mpremote can't connect, try: turn off the device, then plug in USB to power it on. Not sure why this helps, but it does.
 
+## Development Setup
+
+```bash
+# Install dependencies
+uv sync
+
+# Install pre-commit hooks (required for contributors)
+uv run pre-commit install
+```
+
+This installs git hooks that run [gitleaks](https://github.com/gitleaks/gitleaks) (secret scanning) and [ruff](https://github.com/astral-sh/ruff) (linting/formatting) on every commit.
+
 ## Development Workflow
 
 ### Running Apps

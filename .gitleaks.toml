@@ -1,0 +1,20 @@
+# Gitleaks configuration
+# https://github.com/gitleaks/gitleaks
+
+title = "cardputer gitleaks config"
+
+# Use the default ruleset
+[extend]
+useDefault = true
+
+# Allowlist paths that shouldn't be scanned (if needed)
+[allowlist]
+paths = [
+    # Example: "vendor/**",
+]
+
+# Allowlist specific commits or regexes (for false positives)
+# regexTarget = "match"  # or "line"
+# regexes = [
+#     '''example-test-secret''',
+# ]
