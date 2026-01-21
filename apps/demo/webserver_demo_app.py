@@ -40,9 +40,9 @@ import sys
 from M5 import Lcd, Widgets
 
 # Path setup for standalone mode
-for lib_path in ["/flash/lib", "/remote/lib"]:
-    if lib_path not in sys.path:
-        sys.path.insert(0, lib_path)
+for path in ["/flash/lib", "/remote/lib", "/flash/apps/demo", "/remote/apps/demo"]:
+    if path not in sys.path:
+        sys.path.insert(0, path)
 
 from app_base import AppBase
 
@@ -193,7 +193,7 @@ class WebServerDemo(AppBase):
             Lcd.fillRect(10, 55, 220, 30, Lcd.COLOR.BLACK)
             Lcd.setTextColor(Lcd.COLOR.RED, Lcd.COLOR.BLACK)
             Lcd.setCursor(10, 55)
-            Lcd.print("Microdot not installed!")
+            Lcd.print(f"Import error: {e}")
         except Exception as e:
             print(f"[webserver] Server error: {e}")
             Lcd.fillRect(10, 55, 220, 30, Lcd.COLOR.BLACK)
