@@ -22,3 +22,6 @@ Thumbs.db
 # Logs
 *.log
 /tmp/
+
+# Firmware binaries
+firmware/

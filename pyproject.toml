@@ -4,6 +4,10 @@ version = "0.1.0"
 description = "M5Stack Cardputer ADV MicroPython demos"
 requires-python = ">=3.11"
 
+[tool.cardputer]
+firmware-version = "v2.4.1+therealhaoliu.1"
+firmware-repo = "TheRealHaoLiu/cardputer-adv-micropython"
+
 [tool.uv]
 dev-dependencies = [
     "ruff>=0.8.0",
@@ -117,3 +121,23 @@ except:print('No main.py to remove')
     + fs cp boot.py.orig :/flash/boot.py \
     + fs tree /flash
 """
+
+[tool.poe.tasks.firmware-download]
+help = "Download firmware binary from GitHub releases (optionally specify version)"
+shell = """
+if [ -n "${version}" ]; then
+    VERSION="${version}"
+else
+    VERSION=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['tool']['cardputer']['firmware-version'])")
+fi
+REPO=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['tool']['cardputer']['firmware-repo'])")
+echo "Downloading firmware $VERSION from $REPO..."
+mkdir -p firmware
+gh release download "$VERSION" --repo "$REPO" --pattern "*.bin" --pattern "*.uf2" --pattern "*MODULES.md" --dir firmware --clobber
+echo "Downloaded to firmware/"
+ls -la firmware/
+"""
+
+[tool.poe.tasks.firmware-download.args.version]
+positional = true
+default = ""

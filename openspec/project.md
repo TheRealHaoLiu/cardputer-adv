@@ -178,9 +178,5 @@ The `legacy/` directory contains the original implementation before the app fram
 - poethepoet ≥0.25.0
 - mpremote ≥1.24.0
 
-**Hardware APIs (from UIFlow2):**
-- `M5` - Core hardware initialization and update loop
-- `Lcd` - Display drawing, canvas, colors
-- `Widgets` - UI components (labels, etc.)
-- `Speaker` - Audio output
-- `MatrixKeyboard` - Cardputer ADV keyboard handling
+**Hardware APIs:**
+See `MODULES.md` from the firmware release (`uv run poe firmware-download`) for the full list of available modules including M5, Lcd, Widgets, Speaker, hardware drivers, sensors, networking, and unit classes.

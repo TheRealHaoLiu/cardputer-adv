@@ -26,7 +26,21 @@ class AboutTab(TabBase):
         y = CONTENT_Y + 5
         line_h = 14
 
+        # Firmware version
+        Lcd.setTextColor(GRAY, BLACK)
+        Lcd.setCursor(10, y)
+        Lcd.print("Firmware:")
+        Lcd.setTextColor(WHITE, BLACK)
+        Lcd.setCursor(80, y)
+        try:
+            import firmware_info
+
+            Lcd.print(firmware_info.CUSTOM_VERSION)
+        except Exception:
+            Lcd.print("unknown")
+
         # Device model
+        y += line_h
         Lcd.setTextColor(GRAY, BLACK)
         Lcd.setCursor(10, y)
         Lcd.print("Device:")

@@ -29,7 +29,14 @@ Uses a custom MicroPython firmware based on [uiflow-micropython](https://github.
 - Customizations specific to this project's needs
 - Hardware abstraction for Cardputer ADV's display, keyboard, speaker
 
-**Available modules**: See `MODULES.md` in the firmware repo (`m5stack/boards/M5STACK_CardputerADV_Custom/MODULES.md`) for the full list of available imports including M5, hardware drivers, sensors, networking, and unit classes.
+**Available modules**: See `MODULES.md` in the firmware repo for the full list of available imports including M5, hardware drivers, sensors, networking, and unit classes.
+
+**Firmware version**: Check in Settings > About, or programmatically:
+```python
+import firmware_info
+print(firmware_info.CUSTOM_VERSION)   # "2.4.1+therealhaoliu.1"
+print(firmware_info.UPSTREAM_VERSION) # "2.4.1"
+```
 
 ## Initial Setup
 
@@ -123,6 +130,7 @@ uv run poe deploy           # Copy files to flash
 uv run poe ls [path]        # List files on device
 uv run poe cat <path>       # Show file contents from device
 uv run poe reset            # Reset device
+uv run poe firmware-download [version]  # Download firmware (default: pyproject.toml version)
 uv run poe lint             # Check code for errors
 uv run poe format           # Format code with ruff
 ```
