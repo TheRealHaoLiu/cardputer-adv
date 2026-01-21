@@ -78,6 +78,48 @@ When running `/openspec:archive`:
    - Ask if they want to complete them first or archive anyway
 3. Only run `openspec archive <id> --yes` after user confirms
 
+## Hardware Feedback Loop
+
+When the Cardputer is connected via USB, use `mpremote` to run code directly on the device:
+
+```bash
+# Basic command execution (mpremote auto-connects)
+mpremote exec "import sys; print(sys.implementation)"
+
+# Check WiFi status
+mpremote exec "import network; w = network.WLAN(network.STA_IF); print(w.isconnected(), w.ifconfig()[0] if w.isconnected() else 'N/A')"
+
+# Draw on display
+mpremote exec "import M5; M5.Lcd.clear(); M5.Lcd.print('Hello')"
+
+# File operations
+mpremote fs ls /flash
+mpremote fs cat /flash/boot.py
+```
+
+**Guidelines:**
+- Use short `exec` commands for quick tests - these work reliably
+- Avoid long-running code (infinite loops, framework startup) via mpremote - these can lock up the serial connection
+- For long-running operations, ask the user to run them manually
+- If serial locks up, user may need to reset the device or close the terminal
+
+**Safe poe tasks (Claude can run these):**
+- `poe deploy` - Deploy to flash
+
+**Avoid running directly:**
+- `poe run [file]` - Starts framework loop, can lock up serial
+
+**Use mpremote directly for device operations:**
+- `mpremote exec "code"` - Run Python one-liner
+- `mpremote eval "expr"` - Evaluate expression and print result
+- `mpremote run /tmp/test.py` - Run local script (only sees /flash)
+- `mpremote mount . + run /tmp/test.py` - Run with local dir mounted at /remote (sees local lib/apps changes)
+- `mpremote fs ls /flash` - List files
+- `mpremote fs cat /flash/file.py` - Read file
+- `mpremote fs tree /flash` - Directory tree
+- `mpremote df` - Check disk space
+- `mpremote reset` - Reset device
+
 ## Commit Message Style
 
 Use conventional commit format: `<type>: <description>`
