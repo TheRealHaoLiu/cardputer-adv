@@ -56,12 +56,12 @@ check = { sequence = ["lint", "format --check"], help = "Run all checks (lint + 
 # Device connection tasks
 # NOTE: Interactive REPL commands don't work through poe (tty issues).
 # For REPL access, run directly:
-#   uv run mpremote connect /dev/tty.usbmodem* mount . repl
-#   uv run mpremote connect /dev/tty.usbmodem* repl
+#   uv run mpremote mount . repl
+#   uv run mpremote repl
 
 [tool.poe.tasks.run]
 help = "Mount and run a file (default: main.py)"
-shell = "mpremote connect /dev/tty.usbmodem* mount . + exec \"exec(open('/remote/${file}').read())\""
+shell = "mpremote mount . + exec \"exec(open('/remote/${file}').read())\""
 
 [tool.poe.tasks.run.args.file]
 default = "main.py"
@@ -71,55 +71,20 @@ positional = true
 help = "Deploy to flash (WARNING: replaces main.py, /flash/lib/*, /flash/apps/*)"
 shell = "./deploy.sh"
 
-[tool.poe.tasks.ls]
-help = "List files on device"
-shell = "mpremote connect /dev/tty.usbmodem* fs ls ${path}"
-
-[tool.poe.tasks.ls.args.path]
-default = "/"
-positional = true
-
-[tool.poe.tasks.reset]
-help = "Reset the device"
-shell = "mpremote connect /dev/tty.usbmodem* reset"
-
-[tool.poe.tasks.tree]
-help = "Show directory tree on device"
-shell = "mpremote connect /dev/tty.usbmodem* fs tree ${path}"
-
-[tool.poe.tasks.tree.args.path]
-default = "/flash"
-positional = true
-
-[tool.poe.tasks.cat]
-help = "Show file contents from device"
-shell = "mpremote connect /dev/tty.usbmodem* fs cat ${path}"
-
-[tool.poe.tasks.cat.args.path]
-positional = true
-required = true
-
-[tool.poe.tasks.restore]
-help = "Restore device to original UIFlow state (clears lib, apps, main.py, restores boot.py)"
+[tool.poe.tasks.wipe]
+help = "Wipe device to clean REPL state (removes boot.py, main.py, lib/, apps/)"
 shell = """
-mpremote connect /dev/tty.usbmodem* \
-    exec "
-import os
-def rmtree(p):
- try:
-  for f in os.listdir(p):
-   fp=p+'/'+f
-   try:os.remove(fp)
-   except:rmtree(fp)
-  os.rmdir(p)
- except:pass
-rmtree('/flash/lib');os.mkdir('/flash/lib');print('Cleared /flash/lib')
-rmtree('/flash/apps');os.mkdir('/flash/apps');print('Cleared /flash/apps')
-try:os.remove('/flash/main.py');print('Removed /flash/main.py')
-except:print('No main.py to remove')
-" \
-    + fs cp boot.py.orig :/flash/boot.py \
-    + fs tree /flash
+echo "This will remove boot.py, main.py, lib/, and apps/ from the device."
+read -p "Are you sure? [y/N] " confirm
+if [ "$confirm" = "y" ] || [ "$confirm" = "Y" ]; then
+    mpremote fs rm -r :/flash/lib \
+        + fs rm -r :/flash/apps \
+        + fs rm :/flash/boot.py \
+        + fs rm :/flash/main.py \
+        + fs tree /flash
+else
+    echo "Aborted."
+fi
 """
 
 [tool.poe.tasks.firmware-download]
@@ -141,3 +106,4 @@ ls -la firmware/
 [tool.poe.tasks.firmware-download.args.version]
 positional = true
 default = ""
+
