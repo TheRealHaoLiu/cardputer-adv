@@ -109,7 +109,7 @@ Using `globals()` in exec means top-level variables persist between reloads, use
 - Uses I2C keyboard (TCA8418 controller at address 0x34)
 - I2C pins: SCL=9, SDA=8, INT=11
 - Screen: 240x135 landscape
-- Make sure you flash the correct ADV firmware (not regular Cardputer)
+- Flash the custom firmware from https://github.com/TheRealHaoLiu/cardputer-adv-micropython (branch: `custom-firmware`)
 
 ### Board Detection
 

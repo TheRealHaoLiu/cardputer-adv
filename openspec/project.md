@@ -13,7 +13,7 @@ Cardputer ADV MicroPython Demos is a learning-focused project for the M5Stack Ca
 ## Tech Stack
 
 - **MicroPython** - Python implementation for embedded systems (ESP32-S3)
-- **uiflow-micropython (UIFlow2)** - M5Stack's custom MicroPython firmware with pre-built hardware libraries (Lcd, Widgets, Speaker, etc.)
+- **Custom MicroPython firmware** - Based on M5Stack's UIFlow2, built from https://github.com/TheRealHaoLiu/cardputer-adv-micropython (branch: `custom-firmware`)
 - **uv** - Fast Python package manager for development tooling
 - **poethepoet (poe)** - Task runner for development workflows
 - **ruff** - Python linter and formatter (0.8.0+)
@@ -161,15 +161,17 @@ The `legacy/` directory contains the original implementation before the app fram
 
 - **Memory limited:** ESP32-S3 has limited RAM; always `canvas.delete()` after use
 - **MicroPython compatibility:** Some Python features unavailable; follow ruff ignore rules
-- **Hardware-specific:** Code depends on M5Stack UIFlow2 firmware and Cardputer ADV hardware
+- **Hardware-specific:** Code depends on custom firmware (based on UIFlow2) and Cardputer ADV hardware
 - **Display size:** 240×135 pixels, landscape orientation
 - **No pip:** Dependencies come from UIFlow2 firmware, not installable at runtime
 
 ## External Dependencies
 
 **Firmware Requirements:**
-- M5Stack UIFlow2 firmware (provides M5, Lcd, Widgets, Speaker modules)
-- Pre-flashed on Cardputer ADV device
+- Custom firmware from https://github.com/TheRealHaoLiu/cardputer-adv-micropython (branch: `custom-firmware`)
+- Local convention: clone at `../cardputer-adv-micropython` relative to this repo
+- Based on UIFlow2, provides M5, Lcd, Widgets, Speaker, and many more modules
+- See `MODULES.md` in the firmware repo for full module reference
 
 **Development Tools (installed via uv):**
 - ruff ≥0.8.0

@@ -18,38 +18,34 @@ Start with `apps/hello_world.py` - it's the template with the most detailed expl
 
 ## Firmware
 
-Uses [uiflow-micropython](https://github.com/m5stack/uiflow-micropython) (UIFlow2) instead of vanilla MicroPython.
+Uses a custom MicroPython firmware based on [uiflow-micropython](https://github.com/m5stack/uiflow-micropython).
 
-**Why UIFlow2?**
-- Includes M5Stack hardware libraries (Lcd, Widgets, Speaker, etc.) pre-built
-- Hardware abstraction already done for Cardputer ADV's display, keyboard, speaker
-- No need to find/port drivers for the specific hardware
+**Custom firmware repo**: https://github.com/TheRealHaoLiu/cardputer-adv-micropython (branch: `custom-firmware`)
 
-**Source code**: https://github.com/m5stack/uiflow-micropython
+**Local convention**: Clone alongside this repo at `../cardputer-adv-micropython`
+
+**Why custom firmware?**
+- Based on M5Stack's UIFlow2 with hardware libraries (Lcd, Widgets, Speaker, etc.)
+- Customizations specific to this project's needs
+- Hardware abstraction for Cardputer ADV's display, keyboard, speaker
+
+**Available modules**: See `MODULES.md` in the firmware repo (`m5stack/boards/M5STACK_CardputerADV_Custom/MODULES.md`) for the full list of available imports including M5, hardware drivers, sensors, networking, and unit classes.
 
 ## Initial Setup
 
-### 1. Install m5launcher
+### 1. Flash the custom firmware
 
-Install [m5launcher](https://github.com/bmorcelli/M5Cardputer-Launcher) to make firmware management easier.
-
-### 2. Install uiflow2 firmware
-
-Use m5launcher to install uiflow2 for **Cardputer ADV** (NOT regular Cardputer - they have different hardware).
-
-### 3. Set boot mode
-
-The uiflow firmware has a built-in launcher that can interfere with mpremote. Set boot mode to run main.py directly:
+Clone the firmware repo alongside this one:
 
 ```bash
-uv run poe set-boot-mode      # 0 = run main.py (default)
-uv run poe set-boot-mode 1    # 1 = show built-in launcher
-uv run poe set-boot-mode 2    # 2 = network setup only
+# From parent directory of cardputer-adv
+git clone -b custom-firmware https://github.com/TheRealHaoLiu/cardputer-adv-micropython
+# Follow build instructions in that repo
 ```
 
-For development with mpremote, use mode 0.
+Flash to device using esptool or the build system's flash target.
 
-### 4. USB Connection Note
+### 2. USB Connection Note
 
 If mpremote can't connect, try: turn off the device, then plug in USB to power it on. Not sure why this helps, but it does.
 
@@ -127,7 +123,6 @@ uv run poe deploy           # Copy files to flash
 uv run poe ls [path]        # List files on device
 uv run poe cat <path>       # Show file contents from device
 uv run poe reset            # Reset device
-uv run poe set-boot-mode N  # Set boot mode (0/1/2)
 uv run poe lint             # Check code for errors
 uv run poe format           # Format code with ruff
 ```

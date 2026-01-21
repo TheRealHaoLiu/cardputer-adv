@@ -95,14 +95,6 @@ shell = "mpremote connect /dev/tty.usbmodem* fs cat ${path}"
 positional = true
 required = true
 
-[tool.poe.tasks.set-boot-mode]
-help = "Set boot mode: 0=main.py, 1=launcher, 2=network"
-shell = """mpremote connect /dev/tty.usbmodem* exec "import esp32; nvs=esp32.NVS('uiflow'); nvs.set_u8('boot_option',${mode}); nvs.commit(); print('Boot mode set to ${mode}')" """
-
-[tool.poe.tasks.set-boot-mode.args.mode]
-default = "0"
-positional = true
-
 [tool.poe.tasks.restore]
 help = "Restore device to original UIFlow state (clears lib, apps, main.py, restores boot.py)"
 shell = """
