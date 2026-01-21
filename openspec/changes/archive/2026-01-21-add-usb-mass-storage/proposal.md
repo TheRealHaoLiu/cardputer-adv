@@ -1,5 +1,12 @@
 # Change: Add USB Mass Storage Support
 
+## Status: Abandoned
+
+Filesystem conflict between MicroPython VFS and USB host access requires
+unmounting/remounting synchronization that adds significant complexity.
+The concurrent access problem (both MicroPython and USB host writing to
+the same FAT partition) risks data corruption without proper locking.
+
 ## Why
 
 Current firmware upload workflow is painfully slow:
